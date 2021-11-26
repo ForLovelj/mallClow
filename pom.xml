@@ -11,6 +11,8 @@
         <module>mall-mbg</module>
         <module>mall-common</module>
         <module>mall-demo</module>
+        <module>mall-admin</module>
+        <module>mall-security</module>
     </modules>
     <name>mall-clow</name>
     <description>mall-clow</description>

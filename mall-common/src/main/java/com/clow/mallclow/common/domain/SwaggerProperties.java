@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  * Des: Swagger自定义配置
  */
 @Data //注解在类上，相当于同时使用了@ToString、@EqualsAndHashCode、@Getter、@Setter和@RequiredArgsConstrutor这些注解，对于POJO类十分有用
-@EqualsAndHashCode(callSuper = false)//自动生成equals方法和hashCode方法
+@EqualsAndHashCode(callSuper = false)//自动生成equals方法和hashCode方法  callSuper = false: 不希望equals and hashcode使用到父类的属性信息
 @Builder//用在类、构造器、方法上，为你提供复杂的builder APIs
 public class SwaggerProperties {
     /**

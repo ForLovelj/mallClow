@@ -18,6 +18,9 @@ import java.util.Properties;
  * 修改addFieldComment方法使其生成Swagger的@ApiModelProperty注解来取代原来的方法注释，
  * 添加addJavaFileComment方法，使其能在import中导入@ApiModelProperty，
  * 否则需要手动导入该类，在需要生成大量实体类时，是一件非常麻烦的事。
+ *
+ * 生成代码中有一些Example类，比如UmsAdminExample，我们可以把它理解为一个条件构建器，
+ * 用于构建SQL语句中的各种条件；link:https://cloud.tencent.com/developer/article/1769757
  */
 public class CommentGenerator extends DefaultCommentGenerator {
     private boolean addRemarkComments = false;
