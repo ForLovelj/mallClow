@@ -40,6 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             registry.antMatchers(url).permitAll();
         }
         //允许跨域请求的OPTIONS请求
+        //ps: 规范要求，对那些可能对服务器数据产生副作用的 HTTP 请求方法（特别是 GET 以外的 HTTP 请求，或者搭配某些 MIME 类型的 POST 请求），
+        // 浏览器必须首先使用 OPTIONS 方法发起一个预检请求（preflight request），从而获知服务端是否允许该跨域请求。 link: https://juejin.cn/post/6844903821634699277
         registry.antMatchers(HttpMethod.OPTIONS)
                 .permitAll();
         // 任何请求需要身份认证

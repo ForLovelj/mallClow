@@ -2,6 +2,8 @@ package com.clow.mallclow.controller;
 
 import com.clow.mallclow.common.api.CommonResult;
 import com.clow.mallclow.dto.UmsAdminLoginParam;
+import com.clow.mallclow.dto.UmsAdminParam;
+import com.clow.mallclow.model.UmsAdmin;
 import com.clow.mallclow.service.UmsAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,6 +35,17 @@ public class UmsAdminController {
     private String tokenHead;
     @Autowired
     private UmsAdminService adminService;
+
+    @ApiOperation(value = "用户注册")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult register(@Validated @RequestBody UmsAdminParam umsAdminParam) {
+        UmsAdmin umsAdmin = adminService.register(umsAdminParam);
+        if (umsAdmin == null) {
+            return CommonResult.failed();
+        }
+        return CommonResult.success(umsAdmin);
+    }
 
     @ApiOperation(value = "登录以后返回token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)

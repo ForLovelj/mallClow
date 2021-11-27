@@ -17,6 +17,7 @@ import com.clow.mallclow.service.UmsAdminCacheService;
 import com.clow.mallclow.service.UmsAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -73,7 +74,25 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public UmsAdmin register(UmsAdminParam umsAdminParam) {
-        return null;
+        final UmsAdmin umsAdmin = new UmsAdmin();
+        //BeanUtils.copyProperties link:https://juejin.cn/post/6974303935972507656
+        BeanUtils.copyProperties(umsAdminParam,umsAdmin);
+        //设置创建日期
+        umsAdmin.setCreateTime(new Date());
+        //设置用户状态
+        umsAdmin.setStatus(1);
+        //查询是否有相同的用户名
+        final UmsAdminExample umsAdminExample = new UmsAdminExample();
+        umsAdminExample.createCriteria().andUsernameEqualTo(umsAdmin.getUsername());
+        final List<UmsAdmin> umsAdminList = adminMapper.selectByExample(umsAdminExample);
+        if (CollUtil.isNotEmpty(umsAdminList)) {
+            return null;
+        }
+        //密码加密 避免明文存储
+        final String encodePassword = passwordEncoder.encode(umsAdmin.getPassword());
+        umsAdmin.setPassword(encodePassword);
+        adminMapper.insert(umsAdmin);
+        return umsAdmin;
     }
 
     @Override
