@@ -1,10 +1,13 @@
 package com.clow.mallclow.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import com.clow.mallclow.common.api.CommonResult;
 import com.clow.mallclow.dto.UmsAdminLoginParam;
 import com.clow.mallclow.dto.UmsAdminParam;
 import com.clow.mallclow.model.UmsAdmin;
+import com.clow.mallclow.model.UmsRole;
 import com.clow.mallclow.service.UmsAdminService;
+import com.clow.mallclow.service.UmsRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by clow
@@ -35,6 +42,8 @@ public class UmsAdminController {
     private String tokenHead;
     @Autowired
     private UmsAdminService adminService;
+    @Autowired
+    private UmsRoleService roleService;
 
     @ApiOperation(value = "用户注册")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -59,5 +68,44 @@ public class UmsAdminController {
         tokenMap.put("token", token);
         tokenMap.put("tokenHead", tokenHead);
         return CommonResult.success(tokenMap);
+    }
+
+    @ApiOperation(value = "刷新token")
+    @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult refreshToken(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader);
+        String refreshToken = adminService.refreshToken(token);
+        if (refreshToken == null) {
+            return CommonResult.failed("token已经过期！");
+        }
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("token", refreshToken);
+        tokenMap.put("tokenHead", tokenHead);
+        return CommonResult.success(tokenMap);
+    }
+
+    @ApiOperation(value = "获取当前登录用户信息")
+    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getAdminInfo(Principal principal) {
+        //Spring容器提供，认证后我们可以直接获取使用,见UsernamePasswordAuthenticationToken类，这个Principal实际上就是UsernamePasswordAuthenticationToken
+        //link: https://juejin.cn/post/6844904142037581831
+        if (principal == null) {
+            return CommonResult.unauthorized(null);
+        }
+        String username = principal.getName();
+        final UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
+        final HashMap<String, Object> data = new HashMap<>();
+        data.put("username", umsAdmin.getUsername());
+        data.put("menus", roleService.getMenuList(umsAdmin.getId()));
+        data.put("icon", umsAdmin.getIcon());
+        //获取用户对应的角色列表
+        List<UmsRole> roleList = adminService.getRoleList(umsAdmin.getId());
+        if (CollUtil.isNotEmpty(roleList)) {
+            List<String> roles = roleList.stream().map(UmsRole::getName).collect(Collectors.toList());
+            data.put("roles",roles);
+        }
+        return CommonResult.success(data);
     }
 }

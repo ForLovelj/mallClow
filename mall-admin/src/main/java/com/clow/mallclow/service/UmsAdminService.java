@@ -3,6 +3,7 @@ package com.clow.mallclow.service;
 import com.clow.mallclow.dto.UmsAdminParam;
 import com.clow.mallclow.model.UmsAdmin;
 import com.clow.mallclow.model.UmsResource;
+import com.clow.mallclow.model.UmsRole;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
@@ -33,9 +34,20 @@ public interface UmsAdminService {
     String login(String username,String password);
 
     /**
+     * 刷新token的功能
+     * @param oldToken 旧的token
+     */
+    String refreshToken(String oldToken);
+
+    /**
      * 根据用户id获取用户
      */
     UmsAdmin getItem(Long id);
+
+    /**
+     * 获取用户对应角色
+     */
+    List<UmsRole> getRoleList(Long adminId);
 
     /**
      * 获取指定用户的可访问资源

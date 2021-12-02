@@ -8,10 +8,7 @@ import com.clow.mallclow.dao.UmsAdminRoleRelationDao;
 import com.clow.mallclow.dto.UmsAdminParam;
 import com.clow.mallclow.mapper.UmsAdminLoginLogMapper;
 import com.clow.mallclow.mapper.UmsAdminMapper;
-import com.clow.mallclow.model.UmsAdmin;
-import com.clow.mallclow.model.UmsAdminExample;
-import com.clow.mallclow.model.UmsAdminLoginLog;
-import com.clow.mallclow.model.UmsResource;
+import com.clow.mallclow.model.*;
 import com.clow.mallclow.security.util.JwtTokenUtil;
 import com.clow.mallclow.service.UmsAdminCacheService;
 import com.clow.mallclow.service.UmsAdminService;
@@ -120,6 +117,11 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         return token;
     }
 
+    @Override
+    public String refreshToken(String oldToken) {
+        return jwtTokenUtil.refreshHeadToken(oldToken);
+    }
+
     /**
      * 添加登录记录
      * @param username 用户名
@@ -139,6 +141,11 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public UmsAdmin getItem(Long id) {
         return adminMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public List<UmsRole> getRoleList(Long adminId) {
+        return adminRoleRelationDao.getRoleList(adminId);
     }
 
     @Override
