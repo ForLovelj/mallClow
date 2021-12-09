@@ -1,10 +1,12 @@
 package com.clow.mallclow.service;
 
 import com.clow.mallclow.dto.UmsAdminParam;
+import com.clow.mallclow.dto.UpdateAdminPasswordParam;
 import com.clow.mallclow.model.UmsAdmin;
 import com.clow.mallclow.model.UmsResource;
 import com.clow.mallclow.model.UmsRole;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -45,6 +47,27 @@ public interface UmsAdminService {
     UmsAdmin getItem(Long id);
 
     /**
+     * 根据用户名或昵称分页查询用户
+     */
+    List<UmsAdmin> list(String keyword, Integer pageSize, Integer pageNum);
+
+    /**
+     * 修改指定用户信息
+     */
+    int update(Long id, UmsAdmin admin);
+
+    /**
+     * 删除指定用户
+     */
+    int delete(Long id);
+
+    /**
+     * 修改用户角色关系
+     */
+    @Transactional
+    int updateRole(Long adminId, List<Long> roleIds);
+
+    /**
      * 获取用户对应角色
      */
     List<UmsRole> getRoleList(Long adminId);
@@ -53,6 +76,12 @@ public interface UmsAdminService {
      * 获取指定用户的可访问资源
      */
     List<UmsResource> getResourceList(Long adminId);
+
+
+    /**
+     * 修改密码
+     */
+    int updatePassword(UpdateAdminPasswordParam updatePasswordParam);
 
     /**
      * 获取用户信息
