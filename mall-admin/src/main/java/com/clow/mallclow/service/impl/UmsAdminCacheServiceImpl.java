@@ -2,6 +2,7 @@ package com.clow.mallclow.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import com.clow.mallclow.common.service.RedisService;
+import com.clow.mallclow.dao.UmsAdminRoleRelationDao;
 import com.clow.mallclow.mapper.UmsAdminRoleRelationMapper;
 import com.clow.mallclow.model.UmsAdmin;
 import com.clow.mallclow.model.UmsAdminRoleRelation;
@@ -29,8 +30,8 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     private RedisService redisService;
     @Autowired
     private UmsAdminRoleRelationMapper adminRoleRelationMapper;
-//    @Autowired
-//    private UmsAdminRoleRelationDao adminRoleRelationDao;
+    @Autowired
+    private UmsAdminRoleRelationDao adminRoleRelationDao;
     @Value("${redis.database}")
     private String REDIS_DATABASE;
     @Value("${redis.expire.common}")
@@ -81,12 +82,12 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
 
     @Override
     public void delResourceListByResource(Long resourceId) {
-//        List<Long> adminIdList = adminRoleRelationDao.getAdminIdList(resourceId);
-//        if (CollUtil.isNotEmpty(adminIdList)) {
-//            String keyPrefix = REDIS_DATABASE + ":" + REDIS_KEY_RESOURCE_LIST + ":";
-//            List<String> keys = adminIdList.stream().map(adminId -> keyPrefix + adminId).collect(Collectors.toList());
-//            redisService.del(keys);
-//        }
+        List<Long> adminIdList = adminRoleRelationDao.getAdminIdList(resourceId);
+        if (CollUtil.isNotEmpty(adminIdList)) {
+            String keyPrefix = REDIS_DATABASE + ":" + REDIS_KEY_RESOURCE_LIST + ":";
+            List<String> keys = adminIdList.stream().map(adminId -> keyPrefix + adminId).collect(Collectors.toList());
+            redisService.del(keys);
+        }
     }
 
     @Override
